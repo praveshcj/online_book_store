@@ -1,7 +1,7 @@
 from django.db import  models
 
 class Customer(models.Model):
-    user_id = models.CharField(max_length = 10, primary_key = True)
+    user_id = models.CharField(max_length = 50, primary_key = True)
     email = models.EmailField()
     password = models.CharField(max_length = 50 )
     first_name = models.CharField(max_length = 50)
@@ -10,9 +10,9 @@ class Customer(models.Model):
     phone_no = models.CharField(max_length = 50)
 
 class Book_store(models.Model):
-    store_id = models.CharField(max_length = 10, primary_key = True)
+    store_id = models.AutoField( primary_key = True)
     store_name = models.CharField(max_length = 100)
-    email = models.EmailField()
+    email = models.EmailField(unique = True)
     password = models.CharField(max_length = 50)
     website = models.CharField(max_length = 50)
     phone_no = models.CharField(max_length = 10)
@@ -40,7 +40,7 @@ class Customer_address(models.Model):
 
 
 class Book(models.Model):
-    book_id = models.CharField(max_length = 10, primary_key = True)
+    book_id = models.AutoField( primary_key = True)
     title = models.CharField(max_length = 50)
     author = models.CharField(max_length = 50)
     publisher = models.CharField(max_length = 50)
@@ -48,7 +48,8 @@ class Book(models.Model):
     year_of_publish = models.IntegerField()
     price = models.IntegerField()
     copies_sold = models.IntegerField()
-    rating = models.IntegerField()
+    rating = models.IntegerField(null = True)
+
 
 class Order(models.Model):
     STATUS_CHOICES= (
@@ -139,8 +140,10 @@ class Book_available(models.Model):
         Book, 
         on_delete= models.CASCADE
     )
-    user_id = models.ForeignKey(
-        Customer,
+    store_email = models.ForeignKey(
+        Book_store,
+        to_field = 'email',
+        db_column = 'store_email',
         on_delete = models.CASCADE
     )
     no_of_copies = models.IntegerField()

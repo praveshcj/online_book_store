@@ -1,0 +1,335 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Visitor Home Page</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* Style the header */
+.header {
+  background-color: #EDBD4C;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Style the top navigation bar */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* Style the topnav links */
+.topnav a {
+  float: right;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+}
+
+/* Left and right column */
+.column.side {
+  width: 25%;
+}
+
+/* Middle column */
+.column.middle {
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column.side, .column.middle {
+    width: 100%;
+  }
+}
+
+/* Style the footer */
+.footer {
+  background-color: #EDBD4C;
+  padding: 10px;
+  text-align: center;
+  position: absolute;
+  height: 50px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin-bottom: 0px;
+}
+.button {
+  background-color: #0f2453;
+  border: ;
+  color: white;
+  padding: 10px 40px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color:#2853FE;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  height: 50px;
+}
+</style>
+</head>
+<body>
+
+{% for post in query %}
+<div class="header">
+  <h1>Online Book Store</h1>
+  <h2>Welcome {{post.store_name}} </h2>
+</div>
+
+<div class="topnav">
+  <a href="/storeLogout">Log Out</a>
+  <a href="/password_change">Change Password</a>
+  <a href="/feedback">Feedback</a>
+  <a href="/addBook">Add Book</a>
+  <a href="/storeOrders">Order List</a>
+
+  
+  
+</div>
+
+<div class="row">
+  <div class="column side">
+    <h2 style="font-family:times new roman;font-size:120%";>Profile Info :</h2>
+    <p style="font-family:arial;font-size:90%;line-height:1.2";>       
+     Store Email : {{post.email}}<br><br>
+     Store Name  : {{post.store_name}}<br><br>
+    <p></p>
+  </div>
+{% endfor %}
+  
+  <div class="column middle" align="center">
+    <h2 style="color:#0f2453;border:2px solid #ddd";>Search Rooms</h2>
+    <p>
+       <form method="post" action="{% url 'index' %}" id="options_form"> 
+                        {{ form.as_p }}
+                        {% csrf_token %}
+                        <br><button align="center"  class="button"  type="submit"> Search </button>
+       </form>                 
+    </p>
+  </div>
+  
+  <div class="column side">
+    <h2></h2>
+    <p></p>
+  </div>
+</div>
+
+<div class="footer">
+  <p></p>
+</div>
+  
+</body>
+</html> -->
+
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Store HomePage</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* Style the header */
+.header {
+  background-color: #EDBD4C;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Style the top navigation bar */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* Style the topnav links */
+.topnav a {
+  float: right;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+}
+
+/* Left and right column */
+.column.side {
+  width: 25%;
+}
+
+/* Middle column */
+.column.middle {
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column.side, .column.middle {
+    width: 100%;
+  }
+}
+
+/* Style the footer */
+.footer {
+  background-color: #EDBD4C;
+  padding: 10px;
+  text-align: center;
+  position: absolute;
+  height: 50px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin-bottom: 0px;
+}
+.button {
+  background-color: #0f2453;
+  border: ;
+  color: white;
+  padding: 10px 40px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color:#2853FE;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  height: 50px;
+}
+</style>
+</head>
+<body>
+
+{% for post in query %}
+<div class="header">
+  <h1>Online Book Store</h1>
+  <h2>Welcome {{post.store_name}} </h2>
+</div>
+
+<div class="topnav">
+  <a href="/store/storeLogout">Log Out</a>
+  <a href="/store/change_password">Change Password</a>
+  <a href="/store/edit_profie">Edit Profile</a>
+  <a href="/store/addBook">Add Book</a>
+  <a href="/store/book_list">Books Available</a>
+  <a href="/store/user_list">User List</a>
+  <a href="/store/order_list">Order List</a>
+  <a href="/store/sales">Sales</a>
+  <a href="/store/trending_list">Trending Books</a>
+  
+  
+</div>
+
+<div class="row">
+  <div class="column side">
+    <h2 style="font-family:times new roman;font-size:120%";>Profile Info :</h2>
+    <p style="font-family:arial;font-size:90%;line-height:1.2";>
+     Store Email : {{post.email}}<br><br>
+     Store Name  : {{post.store_name}}<br><br>
+    <p></p>
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages%}
+        <li class="{{message.tags}}">{{message}}</li>
+        {%endfor%}
+      </ul>
+    {%endif%}
+
+  </div>
+{% endfor %}
+  
+  <div class="column middle" align="center">
+    <h2 style="color:#0f2453;border:2px solid #ddd";>Search Books</h2>
+    <p>
+       <form method="post" action="{% url 'index' %}" id="options_form"> 
+                        {{ form.as_p }}
+                        {% csrf_token %}
+                        <br><button align="center"  class="button"  type="submit"> Search </button>
+       </form>                 
+    </p>
+  </div>
+  
+  <div class="column side">
+    <h2></h2>
+    <p></p>
+  </div>
+</div>
+
+<div class="footer">
+  <p></p>
+</div>
+  
+</body>
+</html>

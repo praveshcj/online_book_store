@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from . forms import *
+from django.views import  generic
 
 def index(request):
     return render(request = request, template_name = 'home.html')
@@ -95,6 +96,50 @@ def userOrderComplain(request):
 def userBookReveiw(request):
     return HttpResponse("Helps in reviewing a book by user")
 
+
+#To display the To Read List of the user
+def userBookList(request):
+    if request.session['user_id'] :
+        user_id = request.session['user_id']
+        if request.method == 'POST':
+            return redirect('index')
+        BookObjectList = To_read_list.objects.filter(user_id= user_id)
+        book_list= []
+        for book in BookObjectList:
+            book_object = Book.objects.filter(book_id = book.book_id.book_id)
+            for book_fin in book_object:
+                book_list.append({'title':book_fin.title, 'author': book_fin.author, 'book_id':book_fin.book_id})
+        return render(request, 'users/book_list.html', {'book_list':book_list})
+    else:
+        messages.warning(request,'You are logged in. Please Log in')
+        return redirect('index')
+
+#To remove Book from user's read list
+def userRemoveBook(request, book_id):
+    if request.session['user_id'] :
+        user_id = request.session['user_id']
+        if request.method == 'POST':
+            return redirect('profile')
+        To_read_list.objects.filter(book_id = book_id, user_id = user_id).delete()
+    else:
+        messages.warning(request,'You are logged in. Please Log in')
+        return redirect('index')
+
+def viewBook(request, book_id):
+    sellers= Book_available.objects.filter(book_id = book_id)
+    book = Book.objects.get(book_id = book_id)
+    return render(request, 'users/viewBook.html', {'book': book, 'sellers': sellers})
+
+
+def searchBooks(request):
+    search_term = ''
+
+    if 'search' in request.GET:
+        search_term = request.GET['search']
+        books = Book.objects.filter(title__contains=search_term) 
+    # books = Book.objects.all()
+    print(books)
+    return render(request, 'users/searchResult.html', {'books' : books, 'search_term': search_term })
 #Store Owner
 
 def storeSignUp(request):
@@ -221,3 +266,4 @@ def storeUserList(request):
 #Independent of Store and User
 def trendingList(request):
     return HttpResponse("Returns the best selling books top 10 ")
+

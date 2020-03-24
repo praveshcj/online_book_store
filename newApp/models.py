@@ -148,4 +148,3 @@ class Book_available(models.Model):
     )
     no_of_copies = models.IntegerField()
     book_available_id = models.AutoField(primary_key = True)
-

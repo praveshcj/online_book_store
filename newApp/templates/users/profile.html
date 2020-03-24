@@ -179,10 +179,9 @@ th {
   <a href="/logout">Log Out</a>
   <a href="/password_change">Change Password</a>
   <a href="/feedback">Feedback</a>
-  <a href="/my-bookings">My Bookings</a>
-  
-  
+  <a href="/userBookList">To Read List</a>
 </div>
+
 
 <div class="row">
   <div class="column side">
@@ -196,12 +195,11 @@ th {
   
   <div class="column middle" align="center">
     <h2 style="color:#0f2453;border:2px solid #ddd";>Search Rooms</h2>
-    <p>
-       <form method="post" action="{% url 'index' %}" id="options_form"> 
-                        {{ form.as_p }}
-                        {% csrf_token %}
-                        <br><button align="center"  class="button"  type="submit"> Search </button>
-       </form>                 
+    <p>       
+      <form class="form-inline my-2 my-lg-0" action="{% url 'searchBooks' %}" method= "GET">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search Books" aria-label="Search" name="search" >
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>                
     </p>
   </div>
   

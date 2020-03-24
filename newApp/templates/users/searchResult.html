@@ -1,0 +1,7 @@
+<h1> Search Result for '{{search_term}}'</h1>
+
+{% for book in books %}
+<a href="{% url 'viewBook' book.book_id %}"> {{book.title}} </a>
+<h2>By: {{book.author}}</h2>
+<h2>Genre: {{book.description}}</h2>  
+{% endfor %}

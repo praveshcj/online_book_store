@@ -1,0 +1,10 @@
+<h1>{{book.title}}</h1>
+<h2>{{book.author}}</h2>
+<ul>
+{% for seller in sellers %}
+    <li>
+        Store Name: {{seller.store_email.store_name}} <br>
+        Email: {{seller.store_email.email}}
+    </li>
+{% endfor %}
+</ul>

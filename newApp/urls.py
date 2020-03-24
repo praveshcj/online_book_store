@@ -12,6 +12,10 @@ urlpatterns = [
     path('storeLogin',views.storeLogin, name= 'storeLogIn'),
     path('storeProfile', views.storeProfile, name = 'storeProfile'),
     path('storeLogout', views.storeLogout, name = 'storeLogout'),
-    path('addBook', views.storeBookAdd, name = "storeAddBook")
+    path('addBook', views.storeBookAdd, name = "storeAddBook"),
+    path('userBookList/', views.userBookList,  name = "userBooks"),
+    path('removeBook/<int:book_id>/', views.userRemoveBook, name = 'removeBook'),
+    path('viewBook/<int:book_id>/', views.viewBook, name= 'viewBook'),
+    path('searchBooks', views.searchBooks, name = 'searchBooks')
 ]
 

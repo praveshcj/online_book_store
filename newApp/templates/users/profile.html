@@ -198,6 +198,12 @@ th {
     <p>       
       <form class="form-inline my-2 my-lg-0" action="{% url 'searchBooks' %}" method= "GET">
         <input class="form-control mr-sm-2" type="search" placeholder="Search Books" aria-label="Search" name="search" >
+        <select id="cars" name="filter">
+          <option value="title">Title</option>
+          <option value="author">Author</option>
+          <option value="publisher">Publisher</option>
+          <option value="genre">Genre</option>
+        </select> 
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>                
     </p>

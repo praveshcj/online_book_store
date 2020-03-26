@@ -136,10 +136,18 @@ def searchBooks(request):
 
     if 'search' in request.GET:
         search_term = request.GET['search']
-        books = Book.objects.filter(title__contains=search_term) 
+        filter = request.GET['filter']
+        if(filter == 'title'):
+            books = Book.objects.filter( title__contains=search_term )
+        if(filter == 'genre'):
+            books = Book.objects.filter( genre__contains=search_term )
+        if(filter == 'publisher'):
+            books = Book.objects.filter( publisher__contains=search_term ) 
+        if(filter == 'author'):
+            books = Book.objects.filter( author__contains=search_term )
     # books = Book.objects.all()
     print(books)
-    return render(request, 'users/searchResult.html', {'books' : books, 'search_term': search_term })
+    return render(request, 'users/searchResult.html', {'books' : books, 'search_term': search_term, 'filter': filter })
 #Store Owner
 
 def storeSignUp(request):

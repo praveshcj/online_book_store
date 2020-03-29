@@ -81,26 +81,23 @@ class Book(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES  = [('Delivered', 'Delivered'), ('Processing', 'Processing'), ('Cancelled', 'Cancelled')]
-    order_id        = models.CharField(max_length = 10, primary_key = True)
+    order_id        = models.AutoField(primary_key = True)
     user_id         = models.ForeignKey(Customer, on_delete = models.CASCADE)
     store_id        = models.ForeignKey(Book_store, on_delete = models.CASCADE)
 
     status                  = models.CharField(max_length = 20, choices = STATUS_CHOICES)
-    date_of_order           = models.DateTimeField(null = True)
-    expected_delivery_date  = models.DateField(null = True)
-    delivered_date          = models.DateField(null = True)
-    cancelled_date          = models.DateField(null = True)
-    cancelled_by            = models.CharField(max_length = 20, null = True)
-    cancellation_remarks    = models.CharField(max_length = 100, null = True)
+    date_of_order           = models.DateTimeField(null = True, blank= True)
+    expected_delivery_date  = models.DateField(null = True, blank = True)
+    delivered_date          = models.DateField(null = True, blank = True)
+    cancelled_date          = models.DateField(null = True, blank = True)
+    cancelled_by            = models.CharField(max_length = 20, null = True, blank = True)
+    cancellation_remarks    = models.CharField(max_length = 100, null = True, blank = True)
     total_price             = models.FloatField()
     address_no              = models.IntegerField(default = 0)
 
 
     class Meta:
         db_table = "Order"
-
-    def __str__(self):
-        return self.order_id
 
 
 

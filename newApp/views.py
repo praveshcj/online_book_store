@@ -5,9 +5,11 @@ from . forms import *
 from django.views import  generic
 
 def index(request):
-    if request.session['user_id']:
-        return redirect('profile')
-    return render(request = request, template_name = 'home.html')
+    try:
+        if request.session['user_id']:
+            return redirect('profile')
+    finally: 
+        return render(request = request, template_name = 'home.html')
 
 def signup(request):
     if request.method == 'POST':
@@ -163,22 +165,26 @@ def userPlaceOrder(request, address_no):
         order_id= [] 
         for i in range(0,len(store_list)):
             newOrder = Order()
+            print("The order Id is ", newOrder.order_id)
             newOrder.user_id = Customer.objects.get(user_id = user_id)
             newOrder.store_id = store_list[i]
             newOrder.total_price = price_list[i]
             newOrder.address_no = address_no
             newOrder.status = 'Processing'
             newOrder.save()
+            print("This ID: ", newOrder.order_id)
             order_id.append(newOrder.order_id)
 
         count =0
         for book in all_orders:
             newBook = Book_ordered()
+            print("New Book Book_ordered_id:", newBook.Book_ordered_id)
             newBook.book_id = book.book_id
             newBook.store_id = book.store_id
             newBook.order_id = Order.objects.get(order_id = order_id[book_store_ind[count]])
             newBook.no_of_copies = book.no_of_copies
             newBook.save()
+            print("New Book Book_ordered_id:", newBook.Book_ordered_id)
             count +=1
         
         Cart.objects.filter(user_id = user_id ).delete()
@@ -357,7 +363,6 @@ def storeBookAdd(request):
             newUser.publisher = form.cleaned_data.get('publisher')
             newUser.genre = form.cleaned_data.get('genre')
             newUser.year_of_publish = form.cleaned_data.get('year_of_publish')
-            newUser.price = form.cleaned_data.get('price')
             num_copies = form.cleaned_data.get('no_of_books')
             this_book_count = Book.objects.filter(title = newUser.title, publisher = newUser.publisher).count()
             if this_book_count == 0:
@@ -367,6 +372,7 @@ def storeBookAdd(request):
                 bookAndStore.store_email = Book_store.objects.filter(email = request.session['email']).first()
                 bookAndStore.book_id = newUser
                 bookAndStore.no_of_copies = num_copies
+                bookAndStore.price = form.cleaned_data.get('price')
                 bookAndStore.save()
             else:
                 book_id = Book.objects.filter(title = newUser.title, publisher= newUser.publisher)[0].book_id

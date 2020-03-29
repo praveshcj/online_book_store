@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Visitor Home Page</title>
+<title>User_Signup</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -56,6 +56,7 @@ body {
 /* Middle column */
 .column.middle {
   width: 50%;
+  text-align: center;
 }
 
 /* Clear floats after the columns */
@@ -105,48 +106,35 @@ table {
 th {
   height: 50px;
 }
+
 </style>
 </head>
 <body>
 
-{% for post in query %}
 <div class="header">
-  <h1>Online Guest House Booking Portal</h1>
-  <h2>Welcome {{post.first_name}} {{post.last_name}}</h2>
+  <h1>Online Book Store System</h1>
+  <p style="font-family:times new roman;font-size:140%";>Add User Addres</p>
+
 </div>
 
 <div class="topnav">
-  <a href="/logout">Log Out</a>
-  <a href="/password_change">Change Password</a>
-  <a href="/feedback">Feedback</a>
-  <a href="/userBookList">To Read List</a>
 </div>
-
 
 <div class="row">
   <div class="column side">
-    <h2 style="font-family:times new roman;font-size:120%";>Profile Info :</h2>
-    <p style="font-family:arial;font-size:100%;line-height:1.2";>Username:        
-     {{post.user_id}}<br><br>
-     Name    : {{post.first_name}}  {{post.last_name}}<br><br>
-    <p></p>
-  </div>
-{% endfor %}
+ </div>
   
-  <div class="column middle" align="center">
-    <h2 style="color:#0f2453;border:2px solid #ddd";>Search Rooms</h2>
-    <p>       
-      <form class="form-inline my-2 my-lg-0" action="{% url 'searchBooks' %}" method= "GET">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search Books" aria-label="Search" name="search" >
-        <select id="cars" name="filter">
-          <option value="title">Title</option>
-          <option value="author">Author</option>
-          <option value="publisher">Publisher</option>
-          <option value="genre">Genre</option>
-        </select> 
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>                
-    </p>
+  <div class="column middle">
+  <h2 style="color:#0f2453;border:2px solid black";>Please Log In</h2>
+   <form method="post" align="center" >
+        {% csrf_token %}
+        <table border="1">
+		{{form}}
+		</table>
+        <button  class="button" type="submit">Log In </button>
+	</form>
+
+    
   </div>
   
   <div class="column side">
@@ -161,3 +149,4 @@ th {
   
 </body>
 </html>
+s

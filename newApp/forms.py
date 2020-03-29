@@ -39,3 +39,8 @@ class bookAddForm(forms.Form):
     price = forms.IntegerField()
     no_of_books = forms.IntegerField()
 
+class userAddressForm(forms.ModelForm):
+    class Meta:
+        model = Customer_address
+        fields = ['address_line1', 'address_line2', 'city', 'district', 'state', 'zip_code']
+

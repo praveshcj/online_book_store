@@ -16,6 +16,11 @@ urlpatterns = [
     path('userBookList/', views.userBookList,  name = "userBooks"),
     path('removeBook/<int:book_id>/', views.userRemoveBook, name = 'removeBook'),
     path('viewBook/<int:book_id>/', views.viewBook, name= 'viewBook'),
-    path('searchBooks', views.searchBooks, name = 'searchBooks')
+    path('searchBooks', views.searchBooks, name = 'searchBooks'),
+    path('addToCart/<int:book_id>', views.userCart, name = 'addToCart'),
+    path('confirmAddress', views.userConfirmAddress, name = 'confirmAddress'),
+    path('userAddAddress', views.userAddAddress, name = 'addAddress'),
+    path('userAddAsPrimaryAddress/<int:address_id>', views.userAddAsPrimaryAddress, name = 'addPrimaryAddress'),
+    path('orderPlaced', views.userPlaceOrder, name = 'orderPlaced')
 ]
 

@@ -5,6 +5,8 @@ from . forms import *
 from django.views import  generic
 
 def index(request):
+    if request.session['user_id']:
+        return redirect('profile')
     return render(request = request, template_name = 'home.html')
 
 def signup(request):
@@ -29,6 +31,8 @@ def signup(request):
             return redirect('index')
         else:
             messages.error(request, "Invalid Form Details")
+            form = SignupForm()
+            return render(request, 'users/sign_up.html', {'form': form})
     else:
         form = SignupForm()
     return render(request, 'users/sign_up.html', {'form': form})
@@ -61,7 +65,7 @@ def userProfile(request):
         query = Customer.objects.filter(user_id = posts)
         return render(request, 'users/profile.html', {"query":query})
     else:
-        redirect(request,'users/profile.html', {} )
+        redirect(request,'home.html', {} )
 
 def userLogout(request):
     try:
@@ -72,19 +76,103 @@ def userLogout(request):
 #All starting with user contains user_id in the request to help us identify different users
 
 
-#Request contains serach parameter and user_id and returns the list of books
-
-def userSearchResult(request):
-    return HttpResponse("Searches are here\n")
-
-
 #Returns books added by the particular user
-def userCart(request):
+def userCart(request, book_id):
+    if request.session['user_id']:
+        user_id = request.session['user_id']
+        if 'store_id' in request.GET:
+            print(request.GET['store_id'])
+            thisBookStore = Book_store.objects.get(store_id = request.GET['store_id'])
+            newCart = Cart()
+            newCart.user_id = Customer.objects.get(user_id = user_id)
+            newCart.book_id = Book.objects.get(book_id = book_id)
+            newCart.store_id = thisBookStore
+            newCart.price = Book_available.objects.get(store_email = thisBookStore.email, book_id = book_id).price
+            #newCart.price = request.GET['store'].price
+            newCart.no_of_copies = request.GET['no_of_copies']
+            newCart.save()
+        books_in_cart = Cart.objects.filter(user_id = user_id)
+        total_price = 0
+        num_order = 0
+        seller_list = []
+        for book in books_in_cart:
+                total_price += book.price*book.no_of_copies
+        return render(request, 'users/userCart.html', {'books_in_cart' : books_in_cart, 'total_price' : total_price})
+    else:
+        messages.warning(request, 'You are not logged in. Please log in to continue')
+        redirect('index')    
     return HttpResponse("Cart Page for user")
 
-#Request contains user_id and accordingly we will return the to read List 
-def userReadList(request):
-    return HttpResponse("Read List for User")
+def userConfirmAddress(request):
+    if request.session['user_id']:
+        user_id = request.session['user_id']
+        addresses= Customer_address.objects.filter(user_id = user_id)
+        primary_address = ''
+        other_address = []
+        for address in addresses:
+            if(address.is_current):
+                primary_address = address
+            else:
+                other_address.append(address)
+        obj  = {
+            'primary_address': primary_address,
+            'other_address': other_address
+        }
+        return render(request, 'users/confirmAddress.html', obj)
+    else:
+        messages.warning(request, "You are not logged in. Please log in")
+        return redirect('index')
+        
+def userAddAsPrimaryAddress(request, address_id):
+    if request.session['user_id']:
+        user_id = request.session['user_id']
+        Customer_address.objects.update_or_create(
+            user_id = user_id,
+            defaults = {'is_primary': False}
+        )
+        Customer_address.objects.update_or_create(
+            address_id = address_id,
+            defaults = {'is_primary': True}
+        )
+        return redirect('confirmAddress')
+    else:
+        messages.error(request, "Please Log In First")
+        return redirect('index')
+
+
+def userPlaceOrder(request, address_no):
+    if request.session['user_id']:
+        user_id = request.session['user_id']
+        all_orders = Cart.objects.filter(user_id = user_id)
+        store_list = []
+        price_list = []
+        for books in all_orders:
+            if books.store_id in store_list:
+                price_list[store_list.index()] += books.price*(books.no_of_copies)
+            else:
+                store_list.append(books.store_id)
+                price_list.append(books.price)
+        order_id = ''
+        for i in range(0,len(store_list)):
+            newOrder = Order()
+            newOrder.user_id = user_id
+            newOrder.store_id = store_list[i]
+            newOrder.total_price = price_list[i]
+            newOrder.address_no = address_no
+            newOrder.save()
+            order_id = newOrder.order_id
+        for book in all_orders:
+            newBook = Book_ordered()
+            newBook.book_id = book.book_id
+            newBook.store_id = book.store_id
+            newBook.no_of_copies = book.no_of_copies
+            newBook.save()
+        Cart.objects.filter(user_id = user_id ).delete()
+        messages.success(request, 'Order Placed Successfully')
+        return redirect('profile')
+    else:
+        messages.error(request, 'Please Log In First')
+        return redirect('index')
 
 #Returns all the order made by the user
 def userOrders(request):
@@ -125,8 +213,35 @@ def userRemoveBook(request, book_id):
         messages.warning(request,'You are logged in. Please Log in')
         return redirect('index')
 
+def userAddAddress(request):
+    if request.session['user_id']:
+        user_id = request.session['user_id']
+        if request.method == "POST":
+            form = userAddressForm(request.POST)
+            if form.is_valid():
+                address = Customer_address()
+                address.user_id = user_id
+                address.address_line1 = form.address_line1
+                address.address_line2 = form.address_line2
+                address.city = form.city
+                address.district = form.district
+                address.state = form.state
+                address.zip_code = form.zip_code
+                address.save()
+                messages.success(request, "Address saved successfully")
+                return redirect('profile')
+        else:
+            form = userAddressForm()
+            return render(request, 'users/addAddress.html', {'form ': form})
+    else:
+        messages.error(request,"Please Login First!")
+        return redirect('index')
+
+
 def viewBook(request, book_id):
+    print(book_id)
     sellers= Book_available.objects.filter(book_id = book_id)
+
     book = Book.objects.get(book_id = book_id)
     return render(request, 'users/viewBook.html', {'book': book, 'sellers': sellers})
 

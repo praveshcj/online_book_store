@@ -1,0 +1,15 @@
+<h>Welcome to Cart</h>
+<ul>
+{% for book in books_in_cart %}
+    <li>
+        Title: {{book.book_id.title}}
+        Price: {{book.price}}
+        No of Copies: {{book.no_of_copies}}
+    </li>
+{% endfor %}
+</ul>
+
+Total Price : {{total_price }}
+<form class="form-inline my-2 my-lg-0" action="{% url 'confirmAddress' %}" method= "GET">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form> 

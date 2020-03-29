@@ -86,7 +86,7 @@ class Order(models.Model):
     store_id        = models.ForeignKey(Book_store, on_delete = models.CASCADE)
 
     status                  = models.CharField(max_length = 20, choices = STATUS_CHOICES)
-    date_of_order           = models.DateTimeField(auto_now_add = True)
+    date_of_order           = models.DateTimeField(null = True)
     expected_delivery_date  = models.DateField(null = True)
     delivered_date          = models.DateField(null = True)
     cancelled_date          = models.DateField(null = True)

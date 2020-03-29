@@ -77,7 +77,7 @@ def userLogout(request):
 
 
 #Returns books added by the particular user
-def userCart(request, book_id):
+def userCart(request, book_id = None):
     if request.session['user_id']:
         user_id = request.session['user_id']
         if 'store_id' in request.GET:
@@ -126,14 +126,15 @@ def userConfirmAddress(request):
 def userAddAsPrimaryAddress(request, address_id):
     if request.session['user_id']:
         user_id = request.session['user_id']
-        Customer_address.objects.update_or_create(
-            user_id = user_id,
-            defaults = {'is_primary': False}
-        )
-        Customer_address.objects.update_or_create(
-            address_id = address_id,
-            defaults = {'is_primary': True}
-        )
+        print(address_id)
+        all_address = Customer_address.objects.filter(user_id = user_id)
+        for address in all_address:
+            address.is_current = False
+            address.save()
+        p_address = Customer_address.objects.get(address_id = address_id)
+        p_address.is_current = True
+        p_address.save()
+        messages.success(request, 'Address Set As Primary')
         return redirect('confirmAddress')
     else:
         messages.error(request, "Please Log In First")
@@ -146,27 +147,40 @@ def userPlaceOrder(request, address_no):
         all_orders = Cart.objects.filter(user_id = user_id)
         store_list = []
         price_list = []
+        book_store_ind = []
+        count = 0
         for books in all_orders:
             if books.store_id in store_list:
-                price_list[store_list.index()] += books.price*(books.no_of_copies)
+                price_list[store_list.index(books.store_id)] += books.price*(books.no_of_copies)
+                
             else:
                 store_list.append(books.store_id)
                 price_list.append(books.price)
-        order_id = ''
+            
+            book_store_ind.append(store_list.index(books.store_id))
+            count += 1
+        
+        order_id= [] 
         for i in range(0,len(store_list)):
             newOrder = Order()
-            newOrder.user_id = user_id
+            newOrder.user_id = Customer.objects.get(user_id = user_id)
             newOrder.store_id = store_list[i]
             newOrder.total_price = price_list[i]
             newOrder.address_no = address_no
+            newOrder.status = 'Processing'
             newOrder.save()
-            order_id = newOrder.order_id
+            order_id.append(newOrder.order_id)
+
+        count =0
         for book in all_orders:
             newBook = Book_ordered()
             newBook.book_id = book.book_id
             newBook.store_id = book.store_id
+            newBook.order_id = Order.objects.get(order_id = order_id[book_store_ind[count]])
             newBook.no_of_copies = book.no_of_copies
             newBook.save()
+            count +=1
+        
         Cart.objects.filter(user_id = user_id ).delete()
         messages.success(request, 'Order Placed Successfully')
         return redirect('profile')
@@ -218,21 +232,28 @@ def userAddAddress(request):
         user_id = request.session['user_id']
         if request.method == "POST":
             form = userAddressForm(request.POST)
+            count_add = Customer_address.objects.filter(user_id = user_id)
+            add_num = 0
+            for add in count_add:
+                add_num += 1
             if form.is_valid():
+                print(form)
                 address = Customer_address()
-                address.user_id = user_id
-                address.address_line1 = form.address_line1
-                address.address_line2 = form.address_line2
-                address.city = form.city
-                address.district = form.district
-                address.state = form.state
-                address.zip_code = form.zip_code
+                address.user_id = Customer.objects.get(user_id =user_id)
+                address.address_line1 = form.cleaned_data.get('address_line1')
+                address.address_line2 = form.cleaned_data.get('address_line2')
+                address.city = form.cleaned_data.get('city')
+                address.district = form.cleaned_data.get('district')
+                address.state = form.cleaned_data.get('state')
+                address.zip_code = form.cleaned_data.get('zip_code')
+                address.address_no = add_num +1
                 address.save()
                 messages.success(request, "Address saved successfully")
                 return redirect('profile')
         else:
             form = userAddressForm()
-            return render(request, 'users/addAddress.html', {'form ': form})
+            print(form)
+            return render(request, 'users/addAddress.html', {'form': form})
     else:
         messages.error(request,"Please Login First!")
         return redirect('index')
@@ -362,7 +383,10 @@ def storeBookAdd(request):
     if request.session.has_key('email'):
         posts = request.session['email']
         query = Book_store.objects.filter(email = posts)
-        return render(request, 'store/storeProfile.html', {"query":query})     
+        return render(request, 'store/storeProfile.html', {"query":query})
+    else:
+        messages.error(request, "Please Log In First")
+        return redirect('index')     
 
 def storeBookDel(request):
     return HttpResponse("Helps in removing books for store book list")

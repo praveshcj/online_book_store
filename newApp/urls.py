@@ -18,9 +18,10 @@ urlpatterns = [
     path('viewBook/<int:book_id>/', views.viewBook, name= 'viewBook'),
     path('searchBooks', views.searchBooks, name = 'searchBooks'),
     path('addToCart/<int:book_id>', views.userCart, name = 'addToCart'),
+    path('userCart', views.userCart, name = 'userCart'),
     path('confirmAddress', views.userConfirmAddress, name = 'confirmAddress'),
-    path('userAddAddress', views.userAddAddress, name = 'addAddress'),
-    path('userAddAsPrimaryAddress/<int:address_id>', views.userAddAsPrimaryAddress, name = 'addPrimaryAddress'),
-    path('orderPlaced', views.userPlaceOrder, name = 'orderPlaced')
+    path('userAddAddress', views.userAddAddress, name = 'userAddAddress'),
+    path('userAddAsPrimaryAddress/<int:address_id>', views.userAddAsPrimaryAddress, name = 'userAddAsPrimaryAddress'),
+    path('orderPlaced/<int:address_no>', views.userPlaceOrder, name = 'orderPlaced')
 ]
 

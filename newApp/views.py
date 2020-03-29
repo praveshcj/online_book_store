@@ -364,7 +364,7 @@ def storeBookAdd(request):
             newUser.genre = form.cleaned_data.get('genre')
             newUser.year_of_publish = form.cleaned_data.get('year_of_publish')
             num_copies = form.cleaned_data.get('no_of_books')
-            this_book_count = Book.objects.filter(title = newUser.title, publisher = newUser.publisher).count()
+            this_book_count = Book.objects.filter(title = newUser.title, author = newUser.author).count()
             if this_book_count == 0:
                 newUser.copies_sold = 0
                 newUser.save()
@@ -375,9 +375,15 @@ def storeBookAdd(request):
                 bookAndStore.price = form.cleaned_data.get('price')
                 bookAndStore.save()
             else:
-                book_id = Book.objects.filter(title = newUser.title, publisher= newUser.publisher)[0].book_id
+                book_id = Book.objects.filter(title = newUser.title, author= newUser.author)[0].book_id
                 store_email = Book_store.objects.filter(email = request.session['email']).first()
-                myBook = Book_available.objects.get(book_id = book_id, store_email = store_email)
+                myBook = Book_available.objects.filter(book_id = book_id, store_email = store_email).count()
+                if myBook is 0:
+                    myBook = Book_available()
+                    myBook.book_id = Book.objects.get(title = newUser.title, author = newUser.author)
+                    myBook.store_email = store_email
+                else:
+                    myBook = Book_available.objects.get(book_id = book_id, store_email = store_email)
                 myBook.no_of_copies = myBook.no_of_copies + num_copies
                 myBook.save()
         else:
